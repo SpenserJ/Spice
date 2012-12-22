@@ -3,7 +3,6 @@
  * This ensures that you're not using stale spices. Blech!
  * @class
  * @namespace Spice
- * @param {*} __ The value to initialize with
  */
 function Spice(__) { return new SpiceRack(__); }
 
@@ -11,7 +10,6 @@ function Spice(__) { return new SpiceRack(__); }
  * This is where the kick comes from!
  * @class
  * @namespace SpiceRack
- * @param {*} __ The value to initialize with
  */
 function SpiceRack(__) {
   this.version = '0.1.1';
@@ -206,7 +204,7 @@ SpiceRack.prototype.Chop = function Chop() {
  * Find conditions within a certain distance
  * @param {Number} [distance] How far do you want to search?
  * @param {Object} [target] Which target are we searching around? Defaults to
-*      Me.
+ *     Me.
  */
 SpiceRack.prototype.FindWithinDistance = function FindWithinDistance(
     distance, target) {
