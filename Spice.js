@@ -118,7 +118,10 @@ SpiceRack.prototype.Drop = function Drop(coordinates) {
     coordinates = { x: Me.x, y: Me.y };
 
   if (this.__IsNextTo(coordinates, Me) === true) {
-    UseAction("Drop", { slot: this.__.slot, destination: coordinates });
+    if (this.__ instanceof Array)
+      UseAction("Drop", { slot: this.__[0].slot, destination: coordinates });
+    else
+      UseAction("Drop", { slot: this.__.slot, destination: coordinates });
     return true;
   } else {
     MoveTowards(coordinates);
