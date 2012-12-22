@@ -287,7 +287,7 @@ SpiceRack.prototype.__CreateObject = function __CreateObject(entity, amount) {
  * @param {Number} amount How many should be created?
  */
 SpiceRack.prototype.__CreateStone = function __CreateStone(amount) {
-  return Spice.Sandbox.CreateObject({ icon: "SmallRock", isobject: true, name: "Stone", itemtype: "stone" }, amount);
+  return this.__CreateObject({ icon: "SmallRock", isobject: true, name: "Stone", itemtype: "stone" }, amount);
 };
 
 /**
@@ -295,7 +295,7 @@ SpiceRack.prototype.__CreateStone = function __CreateStone(amount) {
  * @param {Number} amount How many should be created?
  */
 SpiceRack.prototype.__CreateBranch = function CreateBranch(amount) {
-  return Spice.Sandbox.CreateObject({ icon: "Branch", isobject: true, name: "Branch", itemtype: "branch" }, amount);
+  return this.__CreateObject({ icon: "Branch", isobject: true, name: "Branch", itemtype: "branch" }, amount);
 };
 
 /**
@@ -303,7 +303,7 @@ SpiceRack.prototype.__CreateBranch = function CreateBranch(amount) {
  * @param {Number} amount How many should be created?
  */
 SpiceRack.prototype.__CreateWood = function __CreateWood(amount) {
-  return Spice.Sandbox.CreateObject({ icon: "log", isobject: true, name: "Wood", itemtype: "wood" }, amount);
+  return this.__CreateObject({ icon: "log", isobject: true, name: "Wood", itemtype: "wood" }, amount);
 };
 
 
