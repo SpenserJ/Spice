@@ -1,8 +1,8 @@
-# Spice (v0.1)
+# Spice (v0.1.1)
 Developed by MalevolentJalapeno (Spenser Jones)
 
 ## Download
-You can download the most recent version of Spice (v0.1) by [clicking here](https://github.com/SpenserJ/Spice/raw/master/Spice.js).
+You can download the most recent version of Spice (v0.1.1) by [clicking here](https://github.com/SpenserJ/Spice/raw/master/Spice.js).
 
 ## Usage
 Start by initializing Spice() on any entity, array, or even without an argument. After that, start calling some functions on it, and watch in amazement as your script is cut in half (or more!)
