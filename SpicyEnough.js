@@ -35,6 +35,10 @@ SpiceTest.prototype.equals = function equals(assertion) {
   this.log(this.result === assertion);
 }
 
+SpiceTest.prototype.notEquals = function notEquals(assertion) {
+  this.log(this.result !== assertion);
+}
+
 SpiceTest.prototype.greaterThan = function greaterThan(assertion) {
   this.log(this.result > assertion);
 }
