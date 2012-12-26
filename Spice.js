@@ -69,17 +69,15 @@ SpiceRack.prototype.GetItemByType = function GetItemByType(itemtype) {
  */
 SpiceRack.prototype.ContainsItems = function ContainsItems(filter) {
   if (typeof this.__ === 'undefined')
-    return this.Abort("Spice.ContainsItems - Please initialize Spice with " +
-        "an entity.");
-  if (typeof this.__.inventory === 'undefined')
-    return this.Abort("Spice.ContainsItems - Please initialize Spice with " +
-        "an entity that has an inventory.");
+    return Spice().Inventory().ContainsItems(filter);
+  if (typeof this.__.inventory !== 'undefined')
+    return this.Inventory().ContainsItems(filter);
 
   // If no filter is specified, allow everything
   if (typeof filter === 'undefined') filter = function() { return true; };
 
   // Filter the items in the inventory
-  var items = Spice(this.__.inventory).Filter(filter);
+  var items = Spice(this.__).Filter(filter);
   return (items.__.length > 0); // Does it have at least one item of interest?
 };
 
