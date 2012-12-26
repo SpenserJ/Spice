@@ -16,7 +16,7 @@ function Spice(__) {
  * @namespace SpiceRack
  */
 function SpiceRack(__) {
-  this.version = '0.1.1';
+  this.version = '0.1.2';
   // This is what we'll call the original object
   this.__ = this.TopiaObject = __;
   if (typeof this.__ === 'object' && this.__ instanceof Array === false)
@@ -553,4 +553,19 @@ SpiceRack.prototype.__CreateWood = function __CreateWood(amount) {
       name: "Wood",
       itemtype: "wood"
   }, amount);
+};
+
+/**
+ * Delete the objects specified
+ * @param {Object} [deleting] An individual object or array of objects to
+ *     delete from the world.
+ */
+SpiceRack.prototype.__Delete = function __Delete(deleting) {
+  if (deleting instanceof Array === true) {
+    for (var i = 0; i < deleting.length; i++) {
+      this.__Delete(deleting[i]);
+    }
+  } else {
+    World.Delete(deleting);
+  }
 };
