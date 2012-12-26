@@ -25,10 +25,12 @@ function SpiceTest(description, testing) {
 }
 
 SpiceTest.prototype.log = function log(pass, error) {
-  Log((pass === true) ?
-      "Passed." :
-      ("Failed: " + this.description + ((typeof error !== 'undefined') ?
-          "\nError: " + error : "")));
+  if (pass === false) {
+    Log("Failed: " + this.description +
+        ((typeof error !== 'undefined') ? "\nError: " + error : ""));
+    return Stop();
+  }
+  Log("Passed.");
 }
 
 SpiceTest.prototype.equals = function equals(assertion) {
