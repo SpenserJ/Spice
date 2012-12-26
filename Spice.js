@@ -16,7 +16,7 @@ function Spice(__) {
  * @namespace SpiceRack
  */
 function SpiceRack(__) {
-  this.version = '0.1.2';
+  this.version = '0.1.3';
   // This is what we'll call the original object
   this.__ = this.TopiaObject = __;
   if (typeof this.__ === 'object' && this.__ instanceof Array === false)
@@ -504,6 +504,7 @@ SpiceRack.prototype.Benchmark = function Benchmark(times) {
  * Create an object at your feet
  * @param {Object} entity Entity configuration objects
  * @param {Number} [amount] How many should be created? Defaults to 1
+ * @return {Object} The entity/entities that were created
  */
 SpiceRack.prototype.__CreateObject = function __CreateObject(entity, amount) {
   if (typeof entity.x === 'undefined') entity.x = Me.x;
@@ -513,45 +514,60 @@ SpiceRack.prototype.__CreateObject = function __CreateObject(entity, amount) {
   var entities = [];
   for (var i = 0; i < amount; i++)
     entities.add(World.Create(World.DeepClone(entity)));
-  return entities;
+  return (entities.length === 1) ? entities[0] : entities;
 };
 
 /**
  * Create an stone at your feet
  * @param {Number} [amount] How many should be created?
+ * @param {Object} [coordinates] The coordinates to create the item at
+ * @return {Object} The entity/entities that were created
  */
-SpiceRack.prototype.__CreateStone = function __CreateStone(amount) {
+SpiceRack.prototype.__CreateStone = function __CreateStone(amount,
+  coordinates) {
   return this.__CreateObject({
     icon: "SmallRock",
     isobject: true,
     name: "Stone",
-    itemtype: "stone"
+    itemtype: "stone",
+    x: ((typeof coordinates !== 'undefined') ? coordinates.x : Me.x),
+    y: ((typeof coordinates !== 'undefined') ? coordinates.y : Me.y)
   }, amount);
 };
 
 /**
  * Create an branch at your feet
  * @param {Number} [amount] How many should be created?
+ * @param {Object} [coordinates] The coordinates to create the item at
+ * @return {Object} The entity/entities that were created
  */
-SpiceRack.prototype.__CreateBranch = function CreateBranch(amount) {
+SpiceRack.prototype.__CreateBranch = function CreateBranch(amount,
+  coordinates) {
   return this.__CreateObject({
     icon: "Branch",
     isobject: true,
     name: "Branch",
-    itemtype: "branch"
+    itemtype: "branch",
+    x: ((typeof coordinates !== 'undefined') ? coordinates.x : Me.x),
+    y: ((typeof coordinates !== 'undefined') ? coordinates.y : Me.y)
   }, amount);
 };
 
 /**
  * Create some wood at your feet
  * @param {Number} [amount] How many should be created?
+ * @param {Object} [coordinates] The coordinates to create the item at
+ * @return {Object} The entity/entities that were created
  */
-SpiceRack.prototype.__CreateWood = function __CreateWood(amount) {
+SpiceRack.prototype.__CreateWood = function __CreateWood(amount, 
+  coordinates) {
   return this.__CreateObject({
-      icon: "log",
-      isobject: true,
-      name: "Wood",
-      itemtype: "wood"
+    icon: "log",
+    isobject: true,
+    name: "Wood",
+    itemtype: "wood",
+    x: ((typeof coordinates !== 'undefined') ? coordinates.x : Me.x),
+    y: ((typeof coordinates !== 'undefined') ? coordinates.y : Me.y)
   }, amount);
 };
 
