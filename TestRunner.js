@@ -47,6 +47,65 @@ SpicyEnough("Spice(Me) has expected properties - Object provided",
   }).hasProperties(Me);
 
 /**
+ * Sandbox item creation
+ */
+
+SpicyEnough("Spice().__CreateObject() creates an item as specified, at our " +
+  "feet",
+  function() {
+    Spice().__CreateObject({
+      icon: "SmallRock",
+      isobject: true,
+      name: "Stone",
+      itemtype: "stone"
+    });
+    return Find({ name: "Stone", x: Me.x, y: Me.y }).length;
+  }).greaterThan(0);
+
+SpicyEnough("Spice().__CreateObject() creates an item as specified, at the " +
+  "desired coordinates",
+  function() {
+    Spice().__CreateObject({
+      icon: "SmallRock",
+      isobject: true,
+      name: "Stone",
+      itemtype: "stone",
+      x: 128,
+      y: 128
+    });
+    return Find({ name: "Stone", x: 128, y: 128 }).length;
+  }).greaterThan(0);
+
+SpicyEnough("Spice().__CreateObject() creates the specified number of items",
+  function() {
+    Spice().__CreateObject({
+      icon: "SmallRock",
+      isobject: true,
+      name: "Stone",
+      itemtype: "stone",
+    }, 5);
+    return Find({ name: "Stone", x: Me.x, y: Me.y }).length;
+  }).greaterThanOrEqualTo(5);
+
+SpicyEnough("Spice().__CreateStone(2) creates two wood at our feet",
+  function() {
+    Spice().__CreateStone(2);
+    return Find({ name: "Stone", x: Me.x, y: Me.y }).length;
+  }).greaterThanOrEqualTo(2);
+
+SpicyEnough("Spice().__CreateBranch(2) creates two wood at our feet",
+  function() {
+    Spice().__CreateBranch(2);
+    return Find({ name: "Branch", x: Me.x, y: Me.y }).length;
+  }).greaterThanOrEqualTo(2);
+
+SpicyEnough("Spice().__CreateWood(2) creates two wood at our feet",
+  function() {
+    Spice().__CreateWood(2);
+    return Find({ name: "Wood", x: Me.x, y: Me.y }).length;
+  }).greaterThanOrEqualTo(2);
+
+/**
  * Inventory()
  */
 
@@ -131,6 +190,6 @@ SpicyEnough("Spice().ContainsItems() returns false if the item was not found",
 
 var needs_testing = ['MoveItem', 'Equip', 'PickUp', 'Drop', 'Loot', 'Chop',
     'FindWithinDistance', 'FindProperties', 'Filter', 'Closest',
-    'ClosestPoint', 'Distance', 'IsMultiDimensional', 'IsAdjacent', 'IsNextTo',
-    '__CreateObject', '__CreateStone', '__CreateBranch', '__CreateWood'];
+    'ClosestPoint', 'Distance', 'IsMultiDimensional', 'IsAdjacent',
+    'IsNextTo'];
 Log("Still needs testing:\n" + needs_testing.join(", "));
