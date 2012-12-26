@@ -4,7 +4,11 @@
  * @class
  * @namespace Spice
  */
-function Spice(__) { return new SpiceRack(__); }
+function Spice(__) {
+  // This ensures that we don't try to SpiceRack our SpiceRack.
+  // We don't like SpiceRacks THAT much, Xzibit!
+  return (__ instanceof SpiceRack) ? __ : new SpiceRack(__);
+}
 
 /**
  * This is where the kick comes from!
@@ -75,9 +79,7 @@ SpiceRack.prototype.ContainsItems = function ContainsItems(filter) {
   if (typeof filter === 'undefined') filter = function() { return true; };
 
   // Filter the items in the inventory
-  var items = Spice(this.__.inventory).Filter(function(item) {
-    return item.itemtype === 'wood'; // Does the inventory contain wood?
-  });
+  var items = Spice(this.__.inventory).Filter(filter);
   return (items.__.length > 0); // Does it have at least one item of interest?
 };
 
@@ -125,7 +127,7 @@ SpiceRack.prototype.PickUp = function PickUp() {
     return this.Abort("Spice.PickUp - Please initialize Spice with an item " +
         "to pick up.");
 
-  if (this.__IsNextTo(Me) === true) {
+  if (this.IsNextTo(Me) === true) {
     UseAction('Get', this.__);
   } else {
     MoveTowards(this.__);
@@ -146,7 +148,7 @@ SpiceRack.prototype.Drop = function Drop(coordinates) {
       typeof coordinates.y === 'undefined')
     coordinates = { x: Me.x, y: Me.y };
 
-  if (this.__IsNextTo(coordinates, Me) === true) {
+  if (this.IsNextTo(coordinates, Me) === true) {
     if (this.__ instanceof Array) {
       UseAction("Drop", { slot: this.__[0].slot, destination: coordinates });
     } else {
@@ -171,7 +173,7 @@ SpiceRack.prototype.Loot = function Loot(filter) {
   if (typeof filter === 'function' && this.ContainsItems(filter) === false)
     return false;
 
-  if (this.__IsNextTo(Me) === false) {
+  if (this.IsNextTo(Me) === false) {
     MoveTowards(this.__);
   } else {
     UseAction("Get", {
@@ -191,11 +193,11 @@ SpiceRack.prototype.Chop = function Chop() {
     return this.Abort("Spice.Chop - Please initialize Spice with an entity " +
         "to chop.");
 
-  if (IsAdjacent(this.__, Me) === true) {
-    UseAction("Chop", this.__);
+  if (this.IsAdjacent(Me) === true) {
+    UseAction("Chop", this);
     return true;
   } else {
-    MoveTowards(this.__);
+    MoveTowards(this);
     return false;
   }
 };
@@ -221,6 +223,21 @@ SpiceRack.prototype.FindWithinDistance = function FindWithinDistance(
   }};
   return Spice(Find(conditions));
 };
+
+/**
+ * Find the properties owned by the selected entity.
+ */
+SpiceRack.prototype.FindProperties = function FindProperties() {
+  if (typeof this.__ === 'undefined')
+    return this.Abort("Spice.FindProperties - Please initialize Spice with " +
+        "an entity to find properties for.");
+
+  if (typeof this.__.property === 'undefined')
+    return this.Abort("Spice.FindProperties - Please initialize Spice with " +
+        "an entity that contains a property.");
+
+  return Spice(this.__.property);
+}
 
 /**
  * Filter an array of entities
@@ -256,18 +273,171 @@ SpiceRack.prototype.Closest = function Closest(target) {
 
   // Loop through all of the matches, looking for the best
   for (var i = 0; i < matches.length; i++) {
-    var examining = matches[i];
+    var examining = Spice(matches[i]),
+        distance  = examining.Distance(target);
 
     // If this match is closer than our currently selected best_match, use
     // this one instead
-    if (Distance(examining, target) < current_distance) {
-      best_match = examining;
-      current_distance = Distance(examining, target);
+    if (distance < current_distance) {
+      best_match = examining.__;
+      
+      // If the object or entity is multi-dimensional, find the closest point.
+      if (examining.IsMultiDimensional() === true)
+        best_match.closest_point = examining.ClosestPoint(target);
+
+      current_distance = distance;
     }
   }
+
   // If we've reached this point, we've checked one or more matches and
   // determined that this is the best one
   return Spice(best_match);
+};
+
+/**
+ * Find the closest point for a multi-dimensional object or entity.
+ * @param {Object} target What are we checking if this object is closest to?
+ * @return {Object} Coordinates of the closest point
+ */
+SpiceRack.prototype.ClosestPoint = function ClosestPoint(target) {
+  if (typeof this.__ === 'undefined')
+    return this.Abort("Spice.ClosestPoint - Please initialize Spice with an " +
+        "object or entity.");
+
+  if (typeof target === 'undefined') target = Me;
+
+  var coordinates = { };
+  if (target.x < this.x) {
+    // Target is West of object
+    coordinates.x = this.x;
+  } else {
+    if (target.x > (this.x + (this.width - 1) * globalTileDistance)) {
+      // Target is East of object
+      coordinates.x = (this.x + (this.width - 1) * globalTileDistance);
+    } else {
+      // Target is between West and East edges
+      coordinates.x = target.x;
+    }
+  }
+
+  if (target.y < this.y) {
+    // Target is North of object
+    coordinates.y = this.y;
+  } else {
+    if (target.y > (this.y + (this.height - 1) * globalTileDistance)) {
+      // Target is South of object
+      coordinates.y = (this.y + (this.height - 1) * globalTileDistance);
+    } else {
+      // Target is between North and South edges
+      coordinates.y = target.y;
+    }
+  }
+
+  return coordinates;
+}
+
+/**
+ * Calculate the distance to a 1x1 object, or a multidimensional object
+ * @oaram {Object} target What are we checking the distance to?
+ * @param {Object} [target2] You can specify an additional target directly, or
+ *     use the already-loaded entity in this.__
+ * @return {Number} Distance (in pixels) between this target and the selection.
+ */
+SpiceRack.prototype.Distance = function Distance(target, target2) {
+  if (typeof target2 === 'undefined') {
+    if (typeof this.__ === 'undefined')
+      return this.Abort("Spice.Distance - You're missing an argument.");
+    target2 = this;
+  } else if (typeof target2.__ === 'undefined') {
+    target2 = Spice(target2);
+  }
+  if (typeof target.__ === 'undefined') target = Spice(target);
+
+  if (target.IsMultiDimensional() === true)
+    target = target.ClosestPoint(target2);
+  if (target2.IsMultiDimensional() === true)
+    target2 = target2.ClosestPoint(target);
+
+  // We now have the two points that are closest to each other, and can
+  // calculate the distance between them.
+  var xDistance = (target.x - target2.x);
+  xDistance = xDistance * xDistance;
+
+  var yDistance = (target.y - target2.y);
+  yDistance = yDistance * yDistance;
+
+  var totalDistance = parseInt(Math.sqrt(xDistance + yDistance));
+
+  return totalDistance;
+}
+
+/**
+ * Is the object or entity multi-dimensional?
+ * @return {Boolean}
+ */
+SpiceRack.prototype.IsMultiDimensional = function IsMultiDimensional() {
+  if (typeof this.__ === 'undefined')
+    return this.Abort("Spice.IsMultiDimensional - Please initialize Spice " +
+        "with an object or entity.");
+  return (typeof this.width !== 'undefined' &&
+          typeof this.height !== 'undefined');
+}
+
+/**
+ * IsAdjacent with support for multi-dimensional objects and entities
+ * @param {Object} target
+ * @param {Object} [target2] You can specify an additional target directly, or
+ *     use the already-loaded entity in this.__
+ */
+SpiceRack.prototype.IsAdjacent = function IsAdjacent(target, target2) {
+  if (typeof target2 === 'undefined') {
+    if (typeof this.__ === 'undefined')
+      return this.Abort("Spice.IsAdjacent - Please initialize Spice with an " +
+          "object or entity.");
+    target2 = this;
+  } else if (typeof target2.__ === 'undefined') {
+    target2 = Spice(target2);
+  }
+  if (typeof target === 'undefined')
+      return this.Abort("Spice.IsAdjacent - The target argument is required.");
+  if (typeof target.__ === 'undefined') target = Spice(target);
+
+  // If neither have width and height, pass it off to the unpatched version
+  if (target.IsMultiDimensional()  === true)
+    target  = target.ClosestPoint(target2);
+  if (target2.IsMultiDimensional() === true)
+    target2 = target2.ClosestPoint(target);
+
+  if ((target.x + globalTileDistance == target2.x  ||
+       target.x - globalTileDistance == target2.x) &&
+      target.y == target2.y)
+    return true;
+
+  if ((target.y + globalTileDistance == target2.y  ||
+       target.y - globalTileDistance == target2.y) &&
+      target.x == target2.x)
+    return true;
+
+  return false;
+}
+
+/**
+ * Is the selected object next to the target
+ * @param {Object} target
+ * @param {Object} [target2] You can specify an additional target directly, or
+ *     use the already-loaded entity in this.__
+ */
+SpiceRack.prototype.IsNextTo = function IsNextTo(target, target2) {
+  if (typeof target2 === 'undefined') {
+    if (typeof this.__ === 'undefined')
+      return this.Abort("Spice.IsNextTo - You're missing an argument.");
+    target2 = this.__;
+  }
+
+  var xDistance = Math.abs(target.x - target2.x);
+  var yDistance = Math.abs(target.y - target2.y);
+
+  return (xDistance < 64 && yDistance < 64);
 };
 
 /**
@@ -385,31 +555,4 @@ SpiceRack.prototype.__CreateWood = function __CreateWood(amount) {
       name: "Wood",
       itemtype: "wood"
   }, amount);
-};
-
-
-
-/**
- * Waiting for these functions to be added to the Topia scripting engine
- */
-
-
-
-/**
- * Is the selected object next to the target
- * @param {Object} target
- * @param {Object} [target2] You can specify an additional target directly, or
- *     use the already-loaded entity in this.__
- */
-SpiceRack.prototype.__IsNextTo = function __IsNextTo(target, target2) {
-  if (typeof target2 === 'undefined') {
-    if (typeof this.__ === 'undefined')
-      return this.Abort("Spice.__IsNextTo - You're missing an argument.");
-    target2 = this.__;
-  }
-
-  var xDistance = Math.abs(target.x - target2.x);
-  var yDistance = Math.abs(target.y - target2.y);
-
-  return (xDistance < 64 && yDistance < 64);
 };
