@@ -40,6 +40,7 @@ function setPosition(new_position) {
       Spice(GetItemInSlot(Me.inventory, 29 - i)).__RemoveFromInventory();
     }
   }
+  Spice().__Delete(Find({ isobject: true, x: Me.x, y: Me.y }));
 }
 
 // Check if this is our first run
@@ -242,7 +243,9 @@ switch (getPosition()) {
 
     SpicyEnough("Ensure inventory is set up properly",
       function() {
-        return Me.inventory.length;
+        return _.filter(Me.inventory, function(item) {
+          return item.slot < 20;
+        });
       }).equals(4);
 
     SpicyEnough("Spice().Inventory() returns Me.inventory",
@@ -267,8 +270,7 @@ switch (getPosition()) {
     Spice().__Delete(Find({ isobject: true, x: Me.x, y: Me.y }));
     setPosition(2);
     Log("Completed step 2");
-    Spice(Me.inventory).InspectProperties();
-    Spice(Me.inventory[0]).Drop();
+    Spice(GetItemInSlot(Me.inventory, 0)).Drop();
 
     return;
 
@@ -286,7 +288,7 @@ switch (getPosition()) {
     Spice().__Delete(Find({ isobject: true, x: Me.x + 32, y: Me.y + 32 }));
     setPosition(3);
     Log("Completed step 3");
-    Spice(Me.inventory[0]).Drop({ x: Me.x + 32, y: Me.y + 32 });
+    Spice(GetItemInSlot(Me.inventory, 1)).Drop({ x: Me.x + 32, y: Me.y + 32 });
 
     return;
 
