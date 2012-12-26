@@ -585,3 +585,37 @@ SpiceRack.prototype.__Delete = function __Delete(deleting) {
     World.Delete(deleting);
   }
 };
+
+/**
+ * Move an item to your inventory without UseAction("Get")
+ * @param {Number} [slot] The slot to insert the item into
+ */
+SpiceRack.prototype.__MoveToInventory = function __MoveToInventory(slot) {
+  World.Delete(this.__);
+  var item = CreateInventoryItem(this.__);
+  if (typeof slot !== 'undefined') {
+    var to_drop = GetItemInSlot(Me.inventory, slot);
+    if (typeof to_drop !== 'undefined')
+      Spice(to_drop).__RemoveFromInventory();
+    item.slot = slot;
+  }
+  Me.inventory.add(item);
+  usingAction = true;
+  World.Save(Me);
+  usingAction = false;
+}
+
+/**
+ * Remove an item from your inventory without UseAction("Drop")
+ */
+SpiceRack.prototype.__RemoveFromInventory = function __RemoveFromInventory() {
+  var item = this.__;
+  Me.inventory = RemoveItemFromInventory(Me.inventory, item.slot);
+  item.x = Me.x;
+  item.y = Me.y;
+  delete(item.slot);
+  usingAction = true;
+  World.Create(item);
+  World.Save(Me);
+  usingAction = false;
+}
