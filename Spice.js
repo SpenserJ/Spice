@@ -462,7 +462,7 @@ SpiceRack.prototype.InspectProperties = function InspectProperties(recursive) {
   if (this.__ instanceof Array) {
     output += "Array of " + this.__.length + "\n";
     for (var i = 0; i < this.__.length; i++)
-      output += this.__[i].toString() + "\n";
+      output += "array[" + i + "] = " + this.__[i].toString() + "\n";
   } else if (typeof this.__ === 'object') {
     for (var property in this.__)
       output += property + ": " + this.__[property] + "\n";
