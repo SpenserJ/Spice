@@ -591,6 +591,11 @@ SpiceRack.prototype.__Delete = function __Delete(deleting) {
  * @param {Number} [slot] The slot to insert the item into
  */
 SpiceRack.prototype.__MoveToInventory = function __MoveToInventory(slot) {
+  if (this.__ instanceof Array) {
+    for (var i = 0; i < this.__.length; i++)
+      Spice(this.__[i]).__MoveToInventory(slot + i);
+    return;
+  }
   World.Delete(this.__);
   var item = CreateInventoryItem(this.__);
   if (typeof slot !== 'undefined') {
@@ -609,6 +614,11 @@ SpiceRack.prototype.__MoveToInventory = function __MoveToInventory(slot) {
  * Remove an item from your inventory without UseAction("Drop")
  */
 SpiceRack.prototype.__RemoveFromInventory = function __RemoveFromInventory() {
+  if (this.__ instanceof Array) {
+    for (var i = 0; i < this.__.length; i++)
+      Spice(this.__[i]).__RemoveFromInventory();
+    return;
+  }
   var item = this.__;
   Me.inventory = RemoveItemFromInventory(Me.inventory, item.slot);
   item.x = Me.x;
