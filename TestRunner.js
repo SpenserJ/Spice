@@ -12,9 +12,6 @@ if (typeof Spice === 'undefined' ||
   return;
 }
 
-// Add a few empty lines, so we can see where this test begins.
-Log("\n\n\n\n\n\n\n\n\n");
-
 // Disable erroring out in SpiceRack
 SpiceRack.prototype.Abort = function Abort(message) {
   Log("SpiceRack threw error:\n" + message);
@@ -43,10 +40,15 @@ function setPosition(new_position) {
   Spice().__Delete(Find({ isobject: true, x: Me.x, y: Me.y }));
 }
 
+// Tell the script to repeat, as SpicyEnough will stop it on an error
+Repeat();
+
 // Check if this is our first run
-Log("Running step " + getPosition() + " of the tests");
+Log("Running step " + (getPosition() + 1) + " of the tests");
 switch (getPosition()) {
   case 0:
+    // Add a few empty lines, so we can see where this test begins.
+    Log("\n\n\n\n\n\n\n\n\n");
 
     /**
      * Ensure proper instantiation
@@ -191,11 +193,11 @@ switch (getPosition()) {
     SpicyEnough("Spice(item).__MoveToInventory() moves the item from " +
       "the ground to the first available slot in your inventory",
       function() {
-        Spice(Find({ isobject: true, x: Me.x, y: Me.y })).__MoveToInventory();
+        Spice(FindOne({ isobject: true, x: Me.x, y: Me.y })).__MoveToInventory();
         return Me.inventory.length;
       }).equals(inventory_length + 1);
 
-    while (Me.inventory.length > 1)
+    while (Me.inventory.length > 0)
       Spice(Me.inventory[0]).__RemoveFromInventory();
     Spice().__Delete(Find({ isobject: true, x: Me.x, y: Me.y }));
 
@@ -245,7 +247,7 @@ switch (getPosition()) {
       function() {
         return _.filter(Me.inventory, function(item) {
           return item.slot < 20;
-        });
+        }).length;
       }).equals(4);
 
     SpicyEnough("Spice().Inventory() returns Me.inventory",
@@ -307,26 +309,39 @@ switch (getPosition()) {
     Spice().__Delete(Find({ isobject: true, x: Me.x, y: Me.y }));
     setPosition(4);
     Log("Completed step 4");
-    Spice().Drop();
+    Spice().Inventory().Drop();
 
     return;
 
   case 4:
 
     /**
-     * Drop() is split over multiple runs
+     * Drop() is split over multiple runs.
+     * This run we're dropping two items, and it takes two runs.
      */
 
-    SpicyEnough("Spice().Drop() all of our items at our feet",
+    setPosition(5);
+    Log("Completed step 5");
+    Spice().Inventory().Drop();
+
+    return;
+
+  case 5:
+
+    /**
+     * Drop() is split over multiple runs.
+     */
+
+    SpicyEnough("Spice().Inventory().Drop() all of our items at our feet",
       function() {
         return Find({ name: "Wood", x: Me.x, y: Me.y }).length;
       }).greaterThanOrEqualTo(2);
 
-    setPosition(5);
-    Log("Completed step 5");
+    setPosition(6);
+    Log("Completed step 6");
     break;
 
-  case 5:
+  case 6:
 }
 
 return Log('Done tests');
@@ -406,5 +421,6 @@ SpicyEnough("Spice().ContainsItems() returns false if the item was not found",
 
 var needs_testing = ['MoveItem', 'Equip', 'PickUp', 'Drop', 'Loot', 'Chop',
     'FindWithinDistance', 'FindProperties', 'Filter', 'Closest',
-    'ClosestPoint', 'Distance', 'IsMultiDimensional', 'IsAdjacent'];
+    'ClosestPoint', 'Distance', 'IsMultiDimensional', 'IsAdjacent',
+    '__MoveToInventory with Array', '__RemoveFromInventory with Array'];
 Log("Still needs testing:\n" + needs_testing.join(", "));
