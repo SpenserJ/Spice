@@ -749,6 +749,7 @@ function setPosition(new_position) {
 }
 
 // Check if this is our first run
+Log("Running step " + getPosition() + " of the tests");
 switch (getPosition()) {
   case 0:
 
@@ -937,15 +938,18 @@ switch (getPosition()) {
         return Spice(test_item).IsNextTo(Me);
       }).equals(true);
     Spice().__Delete(test_item);
-
     /**
      * Inventory()
      */
 
-    SpicyEnough("Ensure inventory is not empty.",
+    var items = Spice().__CreateWood(4);
+    for (var i = 0; i < items.length; i++)
+      Spice(items[i]).__MoveToInventory();
+
+    SpicyEnough("Ensure inventory is set up properly",
       function() {
         return Me.inventory.length;
-      }).greaterThanOrEqualTo(4);
+      }).equals(4);
 
     SpicyEnough("Spice().Inventory() returns Me.inventory",
       function() {
@@ -963,39 +967,69 @@ switch (getPosition()) {
       }).equals(Me.inventory);
 
     /**
-     * Drop()
+     * Drop() is split over multiple runs
      */
 
-    /**
-     * How do you write a test for something that cancels execution?
-     */
-    
     Spice().__Delete(Find({ isobject: true, x: Me.x, y: Me.y }));
+    setPosition(2);
+    Log("Completed step 2");
+    Spice(Me.inventory[0]).Drop();
+
+    return;
+
+  case 2:
+
+    /**
+     * Drop() is split over multiple runs
+     */
+
     SpicyEnough("Spice(item).Drop() drops an item at our feet",
       function() {
-        Spice(Me.inventory[0]).Drop();
-        return Find({ isobject: true, x: Me.x, y: Me.y }).length;
+        return Find({ name: "Wood", x: Me.x, y: Me.y }).length;
       }).equals(1);
     
     Spice().__Delete(Find({ isobject: true, x: Me.x + 32, y: Me.y + 32 }));
+    setPosition(3);
+    Log("Completed step 3");
+    Spice(Me.inventory[0]).Drop({ x: Me.x + 32, y: Me.y + 32 });
+
+    return;
+
+  case 3:
+
+    /**
+     * Drop() is split over multiple runs
+     */
+
     SpicyEnough("Spice(item).Drop(coordinates) drops an item at the " +
       "specified coordinates",
       function() {
-        Spice(Me.inventory[0]).Drop({ x: Me.x + 32, y: Me.y + 32 });
-        return Find({ isobject: true, x: Me.x + 32, y: Me.y + 32 }).length;
+        return Find({ name: "Wood", x: Me.x + 32, y: Me.y + 32 }).length;
       }).equals(1);
 
     Spice().__Delete(Find({ isobject: true, x: Me.x, y: Me.y }));
+    setPosition(4);
+    Log("Completed step 4");
+    Spice().Drop();
+
+    return;
+
+  case 4:
+
+    /**
+     * Drop() is split over multiple runs
+     */
+
     SpicyEnough("Spice().Drop() all of our items at our feet",
       function() {
-        Spice().Drop();
-        return Find({ isobject: true, x: Me.x, y: Me.y }).length;
+        return Find({ name: "Wood", x: Me.x, y: Me.y }).length;
       }).greaterThanOrEqualTo(2);
 
-    setPosition(2);
+    setPosition(5);
+    Log("Completed step 5");
     break;
 
-  case 2:
+  case 5:
 }
 
 return Log('Done tests');
