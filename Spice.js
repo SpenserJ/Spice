@@ -509,9 +509,20 @@ SpiceRack.prototype.FindPath = function FindPath(from, to, visible) {
   if (typeof visible === 'undefined') visible = true;
 
   var map_data = this.GenerateMap(visible);
+
+  // If our destination is outside the available map, get as close as possible
+  if (to.x < map_data.x + globalTileDistance)
+    to.x = map_data.x + globalTileDistance;
+  if (to.x > map_data.x + map_data.w - globalTileDistance)
+    to.x = map_data.x + map_data.w - globalTileDistance;
+  if (to.y < map_data.y + globalTileDistance)
+    to.y = map_data.y + globalTileDistance;
+  if (to.y > map_data.y + map_data.h - globalTileDistance)
+    to.y = map_data.y + map_data.h - globalTileDistance;
+
   // Set our target as "walkable", otherwise a path can't be generated
-  map_data.map[(to.y   - map_data.y) / globalTileDistance - 1]
-              [(to.x   - map_data.x) / globalTileDistance - 1] = 1;
+  map_data.map[(to.y - map_data.y) / globalTileDistance - 1]
+              [(to.x - map_data.x) / globalTileDistance - 1] = 1;
   var graph = new Graph(Spice(map_data.map).FlipArray());
   //var graph = new Graph(map_data.map);
   var start = graph.nodes[(from.x - map_data.x) / globalTileDistance - 1]
