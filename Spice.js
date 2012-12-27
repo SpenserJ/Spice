@@ -138,7 +138,7 @@ SpiceRack.prototype.PickUp = function PickUp() {
   if (this.IsNextTo(Me) === true) {
     UseAction('Get', this.__);
   } else {
-    MoveTowards(this.__);
+    this.MoveTowards();
   }
 };
 
@@ -164,7 +164,7 @@ SpiceRack.prototype.Drop = function Drop(coordinates) {
     }
     return true;
   } else {
-    MoveTowards(coordinates);
+    Spice(coordinates).MoveTowards();
     return false;
   }
 };
@@ -182,7 +182,7 @@ SpiceRack.prototype.Loot = function Loot(filter) {
     return false;
 
   if (this.IsNextTo(Me) === false) {
-    MoveTowards(this.__);
+    this.MoveTowards();
   } else {
     UseAction("Get", {
       id: this.__.id,
@@ -205,7 +205,7 @@ SpiceRack.prototype.Chop = function Chop() {
     UseAction("Chop", this);
     return true;
   } else {
-    MoveTowards(this);
+    this.MoveTowards();
     return false;
   }
 };
