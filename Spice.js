@@ -484,7 +484,7 @@ SpiceRack.prototype.MoveTowards = function MoveTowards() {
   var totalDistance = Math.abs(Me.x - to.x) + Math.abs(Me.y - to.y);
   // If we're not right beside it, generate a path and start walking down it.
   if (totalDistance > 32)
-    return Spice(this.FindPath(Me, true)).MoveTowards();
+    return Spice(this.FindPath(Me)).MoveTowards();
 
   UseAction("Move", Spice(to).Direction(Me));
 }
@@ -557,18 +557,18 @@ SpiceRack.prototype.GenerateMap = function GenerateMap() {
     for (var x  = map_data.x;
              x  < map_data.x + map_data.w;
              x += globalTileDistance) {
-      map_row.push(1);
+      map_row.push(2);
     }
     map_data.map.push(map_row);
   }
 
   for (var i = 0; i < roads.__.length; i++) {
-    map_data.map[(roads.__[i].y - map_data.y) / globalTileDistance]
-                [(roads.__[i].x - map_data.x) / globalTileDistance] = 0.5; // Faster
+    map_data.map[(roads.__[i].y - map_data.y) / globalTileDistance - 1]
+                [(roads.__[i].x - map_data.x) / globalTileDistance - 1] = 1;
   }
   for (var i = 0; i < obstacles.__.length; i++) {
     map_data.map[(obstacles.__[i].y - map_data.y) / globalTileDistance - 1]
-                [(obstacles.__[i].x - map_data.x) / globalTileDistance - 1] = 0; // Blocked
+                [(obstacles.__[i].x - map_data.x) / globalTileDistance - 1] = 0;
   }
 
   map_data.map[(Me.y - map_data.y) / globalTileDistance - 1]
