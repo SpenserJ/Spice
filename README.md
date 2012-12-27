@@ -1,4 +1,4 @@
-# Spice (v0.1.1)
+# Spice (v0.2.0)
 Developed by MalevolentJalapeno (Spenser Jones)
 
 ## Download
@@ -19,6 +19,17 @@ Spice(Me).Inventory().GetItemByType('axe').Equip();
 ### Find and pick up any objects
 ```javascript
 Spice(Find({ isobject: true })).Closest().PickUp();
+```
+
+### Find the best path to the closest Obelisk, and walk there
+```javascript
+Repeat();
+var obelisk = FindClosest({ isobelisk: true });
+if (Spice(obelisk).IsNextTo(Me)) {
+    Spice().Abort("I'm at the obelisk!");
+} else {
+    Spice(obelisk).MoveTowards();
+}
 ```
 
 ## Debugging and testing scripts

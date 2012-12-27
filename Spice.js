@@ -16,7 +16,7 @@ function Spice(__) {
  * @namespace SpiceRack
  */
 function SpiceRack(__) {
-  this.version = '0.1.3';
+  this.version = '0.2.0';
   // This is what we'll call the original object
   this.__ = this.TopiaObject = __;
   if (typeof this.__ === 'object' && this.__ instanceof Array === false)
