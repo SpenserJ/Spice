@@ -494,21 +494,15 @@ SpiceRack.prototype.MoveTowards = function MoveTowards() {
  * @param {Object} from
  * @param {Object} [to] You can specify a target directly, or use the 
  *     already-loaded entity in this.__
- * @param {Boolean} [visible] Whether or not to pathfind on just the visible
- *     portion of the map. Defaults to true
  */
-SpiceRack.prototype.FindPath = function FindPath(from, to, visible) {
-  if (typeof to === 'boolean') {
-    visible = to;
-    to = undefined;
-  } else if (typeof to === 'undefined') {
+SpiceRack.prototype.FindPath = function FindPath(from, to) {
+  if (typeof to === 'undefined') {
     if (typeof this.__ === 'undefined')
       return this.Abort("Spice.IsNextTo - You're missing an argument.");
     to = this.__;
   }
-  if (typeof visible === 'undefined') visible = true;
 
-  var map_data = this.GenerateMap(visible);
+  var map_data = this.GenerateMap();
 
   // If our destination is outside the available map, get as close as possible
   if (to.x < map_data.x + globalTileDistance)
@@ -544,17 +538,10 @@ SpiceRack.prototype.FindPath = function FindPath(from, to, visible) {
 
 /**
  * Generate a weighted map of the world for pathfinding
- * @param {Boolean} [visible] Whether or not to generate a map of just the
- *     visible portion of the map. Defaults to true
  */
-SpiceRack.prototype.GenerateMap = function GenerateMap(visible) {
-  if (typeof visible === 'undefined') visible = true;
-  var roads = Spice(Find({ name: "Dirt Road" }));
-  var obstacles = Spice(Find({ obstacle: true }));
-  if (visible === true) {
-    roads = roads.__Visible();
-    obstacles = obstacles.__Visible();
-  }
+SpiceRack.prototype.GenerateMap = function GenerateMap() {
+  var roads = Spice(Find({ name: "Dirt Road" })).__Visible();
+  var obstacles = Spice(Find({ obstacle: true })).__Visible();
 
   var map_data = {
     x: Me.x - 11 * globalTileDistance,
