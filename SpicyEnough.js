@@ -31,33 +31,33 @@ SpiceTest.prototype.log = function log(pass, error) {
     return Stop();
   }
   Log("Passed.");
-}
+};
 
 SpiceTest.prototype.equals = function equals(assertion) {
   this.log(this.result === assertion);
-}
+};
 
 SpiceTest.prototype.notEquals = function notEquals(assertion) {
   this.log(this.result !== assertion);
-}
+};
 
 SpiceTest.prototype.greaterThan = function greaterThan(assertion) {
   this.log(this.result > assertion);
-}
+};
 
 SpiceTest.prototype.greaterThanOrEqualTo =
   function greaterThanOrEqualTo(assertion) {
     this.log(this.result >= assertion);
-  }
+  };
 
 SpiceTest.prototype.lessThan = function lessThan(assertion) {
   this.log(this.result < assertion);
-}
+};
 
 SpiceTest.prototype.lessThanOrEqualTo =
   function lessThanOrEqualTo(assertion) {
     this.log(this.result <= assertion);
-  }
+  };
 
 SpiceTest.prototype.hasProperties = function hasProperties(assertion) {
   if (assertion instanceof Array) {
@@ -72,4 +72,4 @@ SpiceTest.prototype.hasProperties = function hasProperties(assertion) {
     }
   }
   this.log(true);
-}
+};

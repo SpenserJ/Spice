@@ -20,7 +20,7 @@ function SpiceRack(__) {
   // This is what we'll call the original object
   this.__ = this.TopiaObject = __;
   if (typeof this.__ === 'object' && this.__ instanceof Array === false)
-    for (property in this.__)
+    for (var property in this.__)
       this[property] = this.__[property];
 }
 
@@ -32,7 +32,7 @@ SpiceRack.prototype.DirectionEnum = {
   East:  1, 1: 'East',
   South: 2, 2: 'South',
   West:  3, 3: 'West'
-}
+};
 
 /**
  * Load an inventory
@@ -67,7 +67,7 @@ SpiceRack.prototype.GetItemByType = function GetItemByType(itemtype) {
   var items = inventory.length;
 
   for (var i = 0; i < items; i++)
-    if (inventory[i].itemtype == itemtype)
+    if (inventory[i].itemtype === itemtype)
       return Spice(inventory[i]);
   
   return Spice(null);
@@ -245,7 +245,7 @@ SpiceRack.prototype.FindProperties = function FindProperties() {
         "an entity that contains a property.");
 
   return Spice(this.__.property);
-}
+};
 
 /**
  * Filter an array of entities
@@ -342,7 +342,7 @@ SpiceRack.prototype.ClosestPoint = function ClosestPoint(target) {
   }
 
   return coordinates;
-}
+};
 
 /**
  * Calculate the distance to a 1x1 object, or a multidimensional object
@@ -377,7 +377,7 @@ SpiceRack.prototype.Distance = function Distance(from, to) {
   var totalDistance = parseInt(Math.sqrt(xDistance + yDistance));
 
   return totalDistance;
-}
+};
 
 /**
  * Determine the direction of the target
@@ -399,7 +399,7 @@ SpiceRack.prototype.Direction = function Direction(from, to) {
   if (to.x > from.x) return this.DirectionEnum.East;
   if (to.y < from.y) return this.DirectionEnum.North;
   if (to.y > from.y) return this.DirectionEnum.South;
-}
+};
 
 
 /**
@@ -412,7 +412,7 @@ SpiceRack.prototype.IsMultiDimensional = function IsMultiDimensional() {
         "with an object or entity.");
   return (typeof this.width !== 'undefined' &&
           typeof this.height !== 'undefined');
-}
+};
 
 /**
  * IsAdjacent with support for multi-dimensional objects and entities
@@ -439,18 +439,18 @@ SpiceRack.prototype.IsAdjacent = function IsAdjacent(target, target2) {
   if (target2.IsMultiDimensional() === true)
     target2 = target2.ClosestPoint(target);
 
-  if ((target.x + globalTileDistance == target2.x  ||
-       target.x - globalTileDistance == target2.x) &&
-      target.y == target2.y)
+  if ((target.x + globalTileDistance === target2.x  ||
+       target.x - globalTileDistance === target2.x) &&
+       target.y === target2.y)
     return true;
 
-  if ((target.y + globalTileDistance == target2.y  ||
-       target.y - globalTileDistance == target2.y) &&
-      target.x == target2.x)
+  if ((target.y + globalTileDistance === target2.y  ||
+       target.y - globalTileDistance === target2.y) &&
+       target.x === target2.x)
     return true;
 
   return false;
-}
+};
 
 /**
  * Is the selected object next to the target
@@ -487,7 +487,7 @@ SpiceRack.prototype.MoveTowards = function MoveTowards() {
     return Spice(this.FindPath(Me)).MoveTowards();
 
   UseAction("Move", Spice(to).Direction(Me));
-}
+};
 
 /**
  * A* pathfinding algorithm that accepts maps with and without tile weighting
@@ -534,7 +534,7 @@ SpiceRack.prototype.FindPath = function FindPath(from, to) {
   }
 
   return cleaned_path;
-}
+};
 
 /**
  * Generate a weighted map of the world for pathfinding
@@ -566,7 +566,7 @@ SpiceRack.prototype.GenerateMap = function GenerateMap() {
     map_data.map[(roads.__[i].y - map_data.y) / globalTileDistance - 1]
                 [(roads.__[i].x - map_data.x) / globalTileDistance - 1] = 1;
   }
-  for (var i = 0; i < obstacles.__.length; i++) {
+  for (i = 0; i < obstacles.__.length; i++) {
     map_data.map[(obstacles.__[i].y - map_data.y) / globalTileDistance - 1]
                 [(obstacles.__[i].x - map_data.x) / globalTileDistance - 1] = 0;
   }
@@ -575,7 +575,7 @@ SpiceRack.prototype.GenerateMap = function GenerateMap() {
               [(Me.x - map_data.x) / globalTileDistance - 1] = 5;
 
   return map_data;
-}
+};
 
 /**
  * Flip the axis of a 2d array
@@ -593,7 +593,7 @@ SpiceRack.prototype.FlipArray = function FlipArray() {
     }
   }
   return new_array;
-}
+};
 
 /**
  * Stop the script, log an error, and say the error
@@ -765,7 +765,7 @@ SpiceRack.prototype.__MoveToInventory = function __MoveToInventory(slot) {
   usingAction = true;
   World.Save(Me);
   usingAction = false;
-}
+};
 
 /**
  * Remove an item from your inventory without UseAction("Drop")
@@ -785,7 +785,7 @@ SpiceRack.prototype.__RemoveFromInventory = function __RemoveFromInventory() {
   World.Create(item);
   World.Save(Me);
   usingAction = false;
-}
+};
 
 /**
  * Filter an array for objects that are out of our field of vision
@@ -800,7 +800,7 @@ SpiceRack.prototype.__Visible = function __Visible() {
             checking.y >= Me.y - 7 * globalTileDistance  &&
             checking.y <= Me.y + 7 * globalTileDistance);
   });
-}
+};
 
 
 
