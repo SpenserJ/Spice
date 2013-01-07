@@ -422,5 +422,5 @@ SpicyEnough("Spice().ContainsItems() returns false if the item was not found",
 var needs_testing = ['MoveItem', 'Equip', 'PickUp', 'Drop', 'Loot', 'Chop',
     'FindWithinDistance', 'FindProperties', 'Filter', 'Closest',
     'ClosestPoint', 'Distance', 'IsMultiDimensional', 'IsAdjacent',
-    '__MoveToInventory with Array', '__RemoveFromInventory with Array'];
+    '__MoveToInventory with Array', '__RemoveFromInventory with Array', 'UseDoor'];
 Log("Still needs testing:\n" + needs_testing.join(", "));
