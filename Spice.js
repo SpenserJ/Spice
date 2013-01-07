@@ -216,8 +216,8 @@ SpiceRack.prototype.Chop = function Chop() {
  */
 SpiceRack.prototype.UseDoor = function UseDoor() {
   if (typeof this.__ === 'undefined')
-    return this.Abort("Spice.Chop - Please initialize Spice with an door " +
-        "to open.");
+    return this.Abort("Spice.UseDoor - Please initialize Spice with a door " +
+        "to open/close.");
 
   if (this.IsAdjacent(Me) === true) {
     UseAction("UseDoor", this);
@@ -289,7 +289,7 @@ SpiceRack.prototype.Closest = function Closest(target) {
   if (typeof this.__ === 'undefined')
     return this.Abort("Spice.Closest - Please initialize Spice with an array" +
         " of entities.");
-
+  Log("ass");
   if (typeof target === 'undefined') target = Me;
 
   // Set up the variables
