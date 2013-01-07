@@ -211,6 +211,24 @@ SpiceRack.prototype.Chop = function Chop() {
 };
 
 /**
+ * Opens/Closes a door (and move to the coordinates first, if necessary)
+ * @param {Object} coordinates The coordinates of the door to open
+ */
+SpiceRack.prototype.UseDoor = function UseDoor() {
+  if (typeof this.__ === 'undefined')
+    return this.Abort("Spice.Chop - Please initialize Spice with an door " +
+        "to open.");
+
+  if (this.IsAdjacent(Me) === true) {
+    UseAction("UseDoor", this);
+    return true;
+  } else {
+    this.MoveTowards();
+    return false;
+  }
+};
+
+/**
  * Find conditions within a certain distance
  * @param {Number} [distance] How far do you want to search?
  * @param {Object} [target] Which target are we searching around? Defaults to
