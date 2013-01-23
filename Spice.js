@@ -289,7 +289,7 @@ SpiceRack.prototype.Closest = function Closest(target) {
   if (typeof this.__ === 'undefined')
     return this.Abort("Spice.Closest - Please initialize Spice with an array" +
         " of entities.");
-  Log("ass");
+
   if (typeof target === 'undefined') target = Me;
 
   // Set up the variables
